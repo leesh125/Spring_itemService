@@ -35,7 +35,8 @@ public class BasicItemController {
 
     // 상품 추가버튼을 누르면 실행
     @GetMapping("/add")
-    public String addForm() {
+    public String addForm(Model model) {
+        model.addAttribute("item", new Item());
         return "form/addForm";
     }
 
