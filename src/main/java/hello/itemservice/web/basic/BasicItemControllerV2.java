@@ -163,6 +163,11 @@ public class BasicItemControllerV2 {
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
+        if (bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "form/v2/addForm";
+        }
+
         log.info("objectNames={}", bindingResult.getObjectName());
         log.info("target={}", bindingResult.getTarget());
 
