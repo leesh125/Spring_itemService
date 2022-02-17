@@ -121,9 +121,11 @@ public class BasicItemControllerV2 {
         return "redirect:/form/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
+        log.info("objectNames={}", bindingResult.getObjectName());
+        log.info("target={}", bindingResult.getTarget());
 
         // 검증 로직 // BindingResult == error
         if(!StringUtils.hasText(item.getItemName())){ // 상품명 공백 입력 경우
@@ -141,6 +143,44 @@ public class BasicItemControllerV2 {
             int resultPrice = item.getPrice() * item.getQuantity();
             if (resultPrice < 10000 ) {
                 bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, resultPrice}, null));
+            }
+        }
+
+        // 검증에 실패하면 다시 입력 폼으로
+        if (bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "form/v2/addForm";
+        }
+
+        // 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId()); // redirect 반환에 치환된다.
+        redirectAttributes.addAttribute("status", true); // 남은 친구들은 쿼리파라미터 형식으로
+        return "redirect:/form/v2/items/{itemId}";
+    }
+
+    @PostMapping("/add")
+    public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        log.info("objectNames={}", bindingResult.getObjectName());
+        log.info("target={}", bindingResult.getTarget());
+
+        // 검증 로직 // BindingResult == error
+        if(!StringUtils.hasText(item.getItemName())){ // 상품명 공백 입력 경우
+            bindingResult.rejectValue("itemName","required");
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.rejectValue("price","range", new Object[]{1000, 1000000}, null);
+        }
+        if (item.getQuantity() == null || item.getQuantity()<0 || item.getQuantity() >= 9999) {
+            bindingResult.rejectValue("quantity","max", new Object[]{9999}, null);
+        }
+
+        // 특정 필드가 아닌 복합 룰 검증
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000 ) {
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
 
