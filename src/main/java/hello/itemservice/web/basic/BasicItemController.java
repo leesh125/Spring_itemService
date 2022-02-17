@@ -45,7 +45,7 @@ public class BasicItemController {
     }
 
     @PostMapping("/add")
-    public String addItem(Item item, RedirectAttributes redirectAttributes, Model model) {
+    public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes, Model model) {
 
         // 검증 오류 결과를 보관
         Map<String, String> errors = new HashMap<>();
@@ -57,7 +57,7 @@ public class BasicItemController {
         if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
             errors.put("price", "가격은 1,000 ~ 1,000,000 까지 허용합니다");
         }
-        if (item.getPrice() == null || item.getPrice()<0 || item.getPrice() >= 9999) {
+        if (item.getPrice() == null || item.getPrice()<0 && item.getPrice() >= 9999) {
             errors.put("quantity", "수량은 최대 9,999 까지 허용합니다.");
         }
 
