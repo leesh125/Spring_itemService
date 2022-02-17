@@ -25,6 +25,7 @@ import java.util.Map;
 public class BasicItemControllerV2 {
 
     private final ItemRepository itemRepository;
+    private final ItemValidator itemValidator;
 
     @GetMapping
     public String items(Model model){
@@ -160,7 +161,7 @@ public class BasicItemControllerV2 {
         return "redirect:/form/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         if (bindingResult.hasErrors()){
@@ -192,6 +193,24 @@ public class BasicItemControllerV2 {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
+
+        // 검증에 실패하면 다시 입력 폼으로
+        if (bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "form/v2/addForm";
+        }
+
+        // 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId()); // redirect 반환에 치환된다.
+        redirectAttributes.addAttribute("status", true); // 남은 친구들은 쿼리파라미터 형식으로
+        return "redirect:/form/v2/items/{itemId}";
+    }
+
+    @PostMapping("/add")
+    public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        itemValidator.validate(item, bindingResult); // (target 객체, 에러)
 
         // 검증에 실패하면 다시 입력 폼으로
         if (bindingResult.hasErrors()){
