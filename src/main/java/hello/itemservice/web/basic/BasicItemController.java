@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("form/items")
+@RequestMapping("form/v1/items")
 @RequiredArgsConstructor
 public class BasicItemController {
 
@@ -26,7 +26,7 @@ public class BasicItemController {
     public String items(Model model){
         List<Item> items = itemRepository.findAll();
         model.addAttribute("items", items);
-        return "form/items";
+        return "form/v1/items";
     }
 
 
@@ -35,7 +35,7 @@ public class BasicItemController {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
 
-        return "form/item";
+        return "form/v1/item";
     }
 
     // 상품 추가버튼을 누르면 실행
@@ -43,7 +43,7 @@ public class BasicItemController {
     public String addForm(Model model) {
         model.addAttribute("item", new Item());
 
-        return "form/addForm";
+        return "form/v1/addForm";
     }
 
     @PostMapping("/add")
@@ -51,7 +51,7 @@ public class BasicItemController {
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId()); // redirect 반환에 치환된다.
         redirectAttributes.addAttribute("status", true); // 남은 친구들은 쿼리파라미터 형식으로
-        return "redirect:/form/items/{itemId}";
+        return "redirect:/form/v1/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")
@@ -59,13 +59,13 @@ public class BasicItemController {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
 
-        return "form/editForm";
+        return "form/v1/editForm";
     }
 
     @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
-        return "redirect:/form/items/{itemId}";
+        return "redirect:/form/v1/items/{itemId}";
     }
 
 }
