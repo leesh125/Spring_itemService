@@ -17,18 +17,18 @@ import java.util.List;
 // @ScriptAssert(lang = "javascript", script = "_this.price * _this.quantity >= 10000", message = "총합이 10000원을 넘기게 입력하세요.")
 public class Item {
 
-    @NotNull // 수정 요구사항 추가
+    @NotNull(groups = UpdateCheck.class) // 수정 요구사항 추가
     private Long id;
 
-    @NotBlank(message = "공백 X") // 빈 값 + 공백 허용 안함(메시지 기본 설정)
+    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class}) // 빈 값 + 공백 허용 안함(메시지 기본 설정)
     private String itemName;
 
-    @NotNull // null을 허용 안 함
-    @Range(min = 1000, max = 1000000)
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class}) // null을 허용 안 함
+    @Range(min = 1000, max = 1000000, groups = {SaveCheck.class, UpdateCheck.class})
     private Integer price;
 
-    @NotNull
-    // @Max(9999) // 수정 요구사항 추가
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
+    @Max(value = 9999, groups = {SaveCheck.class})
     private Integer quantity;
 
     public Item() {
