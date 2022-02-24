@@ -20,6 +20,6 @@ public class ItemUpdateForm {
     @Range(min = 1000, max = 1000000)
     private Integer price;
 
-    // 수정에서는 수량은 자유롭게 병경할 수 있다.
+    // 수정에서는 수량은 자유롭게 변경할 수 있다.
     private Integer quantity;
 }
